@@ -1,0 +1,47 @@
+# Database
+database/*.db
+database/*.db-journal
+database/*.db-wal
+
+# Data files - sensitive/proprietary
+inbox/
+exports/
+*.csv
+*.xlsx
+*.xls
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+
+# Temp files
+*.tmp
+*.bak
+*.backup

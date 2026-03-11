@@ -1,0 +1,95 @@
+version: "1.0"
+title: "WIGEON Auto-Ingest from Google Drive"
+description: |
+  Automated workflow to pull CEVA reports from Google Drive 
+  (populated by Google Apps Script) and ingest into WIGEON database.
+  
+  Prerequisites:
+  1. Google Apps Script "CEVAReportCollector.gs" deployed and running
+  2. WIGEON_CEVA_Reports folder exists in Google Drive
+  3. googledrive extension enabled in Goose
+
+extensions:
+  - googledrive
+  - developer
+
+instructions: |
+  ## WIGEON Auto-Ingest Workflow
+  
+  This recipe automatically:
+  1. Searches Google Drive for the WIGEON_CEVA_Reports folder
+  2. Lists all new Excel/CSV files
+  3. Downloads each file to the WIGEON inbox
+  4. Ingests files into the WIGEON database
+  5. Updates the web dashboard
+  6. Deploys to Blockcell
+  
+  ### Step 1: Find WIGEON_CEVA_Reports Folder
+  
+  Search Google Drive for the folder created by the Apps Script:
+  ```
+  googledrive__search(
+    drive_type="file",
+    query="WIGEON_CEVA_Reports",
+    mime_type="application/vnd.google-apps.folder"
+  )
+  ```
+  
+  ### Step 2: List Files in Folder
+  
+  Once you have the folder ID, list all files:
+  ```
+  googledrive__search(
+    drive_type="file",
+    parent="<FOLDER_ID>",
+    page_size=50
+  )
+  ```
+  
+  ### Step 3: Download New Files
+  
+  For each Excel/CSV file found:
+  ```
+  googledrive__download(
+    id_or_url="<FILE_ID>",
+    output_path="~/WIGEON/inbox/"
+  )
+  ```
+  
+  ### Step 4: Ingest into WIGEON
+  
+  For each downloaded file:
+  ```bash
+  cd ~/Desktop/WIGEON
+  python3 wigeon.py ingest --file inbox/<filename> --third-party "CEVA Logistics" --email ops_reporting@example.com
+  ```
+  
+  ### Step 5: Export Updated Data
+  
+  ```bash
+  python3 wigeon.py export --third-party "CEVA Logistics" --output exports/ceva_all_data.csv --format csv
+  ```
+  
+  ### Step 6: Update Dashboard Stats
+  
+  Run the dashboard to get current stats:
+  ```bash
+  python3 wigeon.py stats
+  ```
+  
+  ### Step 7: Deploy to Blockcell
+  
+  Update the web dashboard with new data and deploy:
+  ```
+  blockcell__manage_site(
+    action="upload",
+    site_name="wigeon-dashboard",
+    directory_path="~/WIGEON/web-dashboard"
+  )
+  ```
+  
+  ### Success Criteria:
+  - All new files downloaded from Google Drive
+  - All files ingested into WIGEON database
+  - Dashboard updated with new statistics
+  - Web dashboard deployed to Blockcell

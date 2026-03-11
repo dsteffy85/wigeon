@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WIGEON Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background-color: #f7f9fa;
+            color: #1e1919;
+            line-height: 1.5;
+        }
+        
+        /* Header - Dropbox style */
+        .header {
+            background: #ffffff;
+            border-bottom: 1px solid #e7ebee;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #0061ff;
+        }
+        
+        .logo-icon {
+            font-size: 24px;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .btn-primary {
+            background: #0061ff;
+            color: white;
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: #0052d9;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #1e1919;
+            border: 1px solid #d4d8dc;
+        }
+        
+        .btn-secondary:hover {
+            background: #f7f9fa;
+        }
+        
+        /* Main container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        /* Stats bar */
+        .stats-bar {
+            background: white;
+            border: 1px solid #e7ebee;
+            border-radius: 8px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #1e1919;
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: #637381;
+            margin-top: 4px;
+        }
+        
+        /* Section headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #637381;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Reports table - Dropbox style */
+        .reports-table {
+            background: white;
+            border: 1px solid #e7ebee;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+        
+        .table-header {
+            display: grid;
+            grid-template-columns: 40px 2fr 1fr 1fr 100px;
+            padding: 12px 16px;
+            background: #f7f9fa;
+            border-bottom: 1px solid #e7ebee;
+            font-size: 12px;
+            font-weight: 600;
+            color: #637381;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .table-row {
+            display: grid;
+            grid-template-columns: 40px 2fr 1fr 1fr 100px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #e7ebee;
+            align-items: center;
+            transition: background 0.15s;
+        }
+        
+        .table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .table-row:hover {
+            background: #f7f9fa;
+        }
+        
+        .table-row a {
+            text-decoration: none;
+            color: inherit;
+        }
+        
+        .table-row.clickable {
+            cursor: pointer;
+        }
+        
+        .table-row.clickable:hover .file-name {
+            color: #0061ff;
+            text-decoration: underline;
+        }
+        
+        .file-link {
+            display: contents;
+        }
+        
+        .file-icon {
+            width: 32px;
+            height: 32px;
+            background: #e8f4e8;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: #1e1919;
+        }
+        
+        .file-meta {
+            font-size: 13px;
+            color: #637381;
+        }
+        
+        .row-count {
+            font-weight: 500;
+            color: #0061ff;
+        }
+        
+        /* Vendor cards */
+        .vendors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .vendor-card {
+            background: white;
+            border: 1px solid #e7ebee;
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.2s;
+        }
+        
+        .vendor-card:hover {
+            border-color: #0061ff;
+        }
+        
+        .vendor-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        .vendor-email {
+            font-size: 13px;
+            color: #637381;
+            margin-bottom: 16px;
+        }
+        
+        .vendor-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+        
+        .vendor-stat {
+            text-align: center;
+            padding: 8px;
+            background: #f7f9fa;
+            border-radius: 4px;
+        }
+        
+        .vendor-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e1919;
+        }
+        
+        .vendor-stat-label {
+            font-size: 11px;
+            color: #637381;
+            text-transform: uppercase;
+        }
+        
+        /* Export files */
+        .exports-section {
+            background: white;
+            border: 1px solid #e7ebee;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .export-file {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            transition: background 0.15s;
+        }
+        
+        .export-file:hover {
+            background: #f7f9fa;
+        }
+        
+        .export-icon {
+            width: 40px;
+            height: 40px;
+            background: #e3f2fd;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 18px;
+        }
+        
+        .export-info {
+            flex: 1;
+        }
+        
+        .export-name {
+            font-weight: 500;
+        }
+        
+        .export-meta {
+            font-size: 13px;
+            color: #637381;
+        }
+        
+        .export-size {
+            font-size: 13px;
+            color: #637381;
+            font-weight: 500;
+        }
+        
+        /* Code block */
+        .code-section {
+            background: #1e1919;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .code-title {
+            color: #a0a0a0;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+        
+        .code-block {
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 13px;
+            color: #e0e0e0;
+            line-height: 1.8;
+        }
+        
+        .code-block .cmd {
+            color: #0061ff;
+        }
+        
+        /* Automation status */
+        .automation-status {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            border: 1px solid #a5d6a7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .status-icon {
+            font-size: 48px;
+        }
+        
+        .status-content h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin-bottom: 4px;
+        }
+        
+        .status-content p {
+            font-size: 14px;
+            color: #388e3c;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: #637381;
+            font-size: 13px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .table-header,
+            .table-row {
+                grid-template-columns: 40px 1fr 80px;
+            }
+            
+            .table-header > *:nth-child(3),
+            .table-row > *:nth-child(3),
+            .table-header > *:nth-child(4),
+            .table-row > *:nth-child(4) {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <span class="logo-icon">🦆</span>
+            <span>WIGEON</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-secondary" onclick="location.reload()">↻ Refresh</button>
+            <a href="https://drive.google.com/drive/folders/1wxhkVq9C_fMi67Jryt4B2Fh5vqi5InYz" target="_blank" class="btn btn-primary">Open Google Drive</a>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <div class="container">
+        
+        <!-- Automation Status -->
+        <div class="automation-status">
+            <div class="status-icon">✅</div>
+            <div class="status-content">
+                <h3>100% Automation Active</h3>
+                <p>Google Apps Script runs daily at 7 AM • Last sync: March 10, 2026 at 8:50 AM</p>
+            </div>
+        </div>
+        
+        <!-- Stats Bar -->
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-value">2</div>
+                <div class="stat-label">Third Parties</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">10</div>
+                <div class="stat-label">Reports</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">74,937</div>
+                <div class="stat-label">Data Rows</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">68.2 MB</div>
+                <div class="stat-label">Database Size</div>
+            </div>
+        </div>
+        
+        <!-- Vendors -->
+        <div class="section-header">
+            <span class="section-title">Third Party Vendors</span>
+        </div>
+        <div class="vendors-grid">
+            <div class="vendor-card">
+                <div class="vendor-name">CEVA Logistics</div>
+                <div class="vendor-email">ops_reporting@example.com</div>
+                <div class="vendor-stats">
+                    <div class="vendor-stat">
+                        <div class="vendor-stat-value">9</div>
+                        <div class="vendor-stat-label">Reports</div>
+                    </div>
+                    <div class="vendor-stat">
+                        <div class="vendor-stat-value">74,492</div>
+                        <div class="vendor-stat-label">Rows</div>
+                    </div>
+                    <div class="vendor-stat">
+                        <div class="vendor-stat-value">Mar 10</div>
+                        <div class="vendor-stat-label">Last Update</div>
+                    </div>
+                </div>
+            </div>
+            <div class="vendor-card">
+                <div class="vendor-name">Block Inventory</div>
+                <div class="vendor-email">ops_reporting@example.com</div>
+                <div class="vendor-stats">
+                    <div class="vendor-stat">
+                        <div class="vendor-stat-value">1</div>
+                        <div class="vendor-stat-label">Reports</div>
+                    </div>
+                    <div class="vendor-stat">
+                        <div class="vendor-stat-value">445</div>
+                        <div class="vendor-stat-label">Rows</div>
+                    </div>
+                    <div class="vendor-stat">
+                        <div class="vendor-stat-value">Mar 10</div>
+                        <div class="vendor-stat-label">Last Update</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Reports -->
+        <div class="section-header">
+            <span class="section-title">Recent Reports</span>
+            <span style="font-size: 12px; color: #637381;">Click to open in Google Drive</span>
+        </div>
+        <div class="reports-table">
+            <div class="table-header">
+                <span></span>
+                <span>Name</span>
+                <span>Vendor</span>
+                <span>Modified</span>
+                <span>Rows</span>
+            </div>
+            <a href="https://docs.google.com/spreadsheets/d/1VcSKTKO46_YO0uHPzMFHj9Wo9KYSlu1V/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Item Sales - MTD</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">18,818</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1yu3QBbvTVKapu6wl3vvDoh-p8eHkWlqi/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Service Level Detail - Daily</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">5,550</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1jjQmdZbk1CH7asBEYfMythC-X-z4QZn_/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Inventory Transaction Detail - Daily</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">4,703</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1Xfdm1fnJUaPknT63rLHqEtf34znmslGy/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Item Sales - Daily</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">4,219</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1kdDwXHtEn6RSIRFqz6Na09Kq0oi3CtMr/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Open Orders</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">1,567</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1F5rzbksBWtWGtd9G3nFrYR6AnGR6LoTW/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Open Orders</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 9, 2026</div>
+                <div class="row-count">249</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1WHsohirqNp3QqQ9j3pq5xFA0b_acNKHL/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block Service Level Detail - Daily</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 9, 2026</div>
+                <div class="row-count">1,986</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/10rM91cwqBX82VpfkbJs4RhjdhhjW5Z2O/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📊</div>
+                <div class="file-name">Block SRL Return Receipts - Daily</div>
+                <div class="file-meta">CEVA Logistics</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">246</div>
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1wT6rCVpvMFcCfIjlnNNkyDy6u0c55n0xGbPV2vQhF_8/edit" target="_blank" class="table-row clickable">
+                <div class="file-icon">📋</div>
+                <div class="file-name">Block Inventory Detail - Daily</div>
+                <div class="file-meta">Block Inventory</div>
+                <div class="file-meta">Mar 10, 2026</div>
+                <div class="row-count">445</div>
+            </a>
+        </div>
+        
+        <!-- SQL Access -->
+        <div class="section-header">
+            <span class="section-title">Database Access - Goose Commands</span>
+        </div>
+        <div class="code-section">
+            <div class="code-title">Quick Commands</div>
+            <div class="code-block">
+                <span class="cmd"># Export all CEVA data to CSV</span><br>
+                python3 wigeon.py export --third-party "CEVA Logistics" --output ceva.csv<br><br>
+                <span class="cmd"># Query specific report</span><br>
+                python3 wigeon.py query --report-id 14 --limit 100<br><br>
+                <span class="cmd"># Direct database access</span><br>
+                sqlite3 ~/Desktop/WIGEON/database/wigeon.db<br><br>
+                <span class="cmd"># Show dashboard</span><br>
+                python3 wigeon.py dashboard
+            </div>
+        </div>
+        
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+        🦆 WIGEON v1.1 • 100% Automated • Last updated: March 10, 2026 at 10:30 AM
+    </div>
+    
+</body>
+</html>
