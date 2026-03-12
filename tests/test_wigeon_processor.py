@@ -27,6 +27,7 @@ def processor(tmp_path):
 # File Processing (end-to-end)
 # ===================================================================
 
+
 class TestProcessFile:
     """Integration tests for process_file."""
 
@@ -137,6 +138,7 @@ class TestProcessFile:
 # Query & Export
 # ===================================================================
 
+
 class TestQueryAndExport:
     """Tests for querying and exporting data."""
 
@@ -214,6 +216,7 @@ class TestQueryAndExport:
 # ===================================================================
 # Statistics
 # ===================================================================
+
 
 class TestProcessorStats:
     """Tests for get_statistics via processor."""

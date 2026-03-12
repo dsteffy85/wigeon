@@ -7,8 +7,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 WIGEON_PY = str(Path(__file__).parent.parent / "wigeon.py")
 
 
@@ -28,6 +26,7 @@ def run_wigeon(*args, cwd=None):
 # ===================================================================
 # Help & Banner
 # ===================================================================
+
 
 class TestCLIHelp:
     """Tests for help output and banner."""
@@ -89,15 +88,19 @@ class TestCLIHelp:
 # Ingest Command
 # ===================================================================
 
+
 class TestCLIIngest:
     """Tests for the ingest subcommand."""
 
     def test_ingest_csv(self, sample_csv, tmp_path):
         result = run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "Test Vendor",
-            "--email", "test@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "Test Vendor",
+            "--email",
+            "test@vendor.com",
             cwd=str(tmp_path),
         )
         assert result.returncode == 0
@@ -107,13 +110,20 @@ class TestCLIIngest:
     def test_ingest_with_all_options(self, sample_csv, tmp_path):
         result = run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "Full Vendor",
-            "--email", "full@vendor.com",
-            "--report-type", "inventory",
-            "--report-date", "2026-03-11",
-            "--subject", "Daily Report",
-            "--notes", "Test run",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "Full Vendor",
+            "--email",
+            "full@vendor.com",
+            "--report-type",
+            "inventory",
+            "--report-date",
+            "2026-03-11",
+            "--subject",
+            "Daily Report",
+            "--notes",
+            "Test run",
             cwd=str(tmp_path),
         )
         assert result.returncode == 0
@@ -122,9 +132,12 @@ class TestCLIIngest:
     def test_ingest_missing_file(self, tmp_path):
         result = run_wigeon(
             "ingest",
-            "--file", "/nonexistent/file.csv",
-            "--third-party", "Bad Vendor",
-            "--email", "bad@vendor.com",
+            "--file",
+            "/nonexistent/file.csv",
+            "--third-party",
+            "Bad Vendor",
+            "--email",
+            "bad@vendor.com",
             cwd=str(tmp_path),
         )
         assert result.returncode == 1
@@ -139,6 +152,7 @@ class TestCLIIngest:
 # List Command
 # ===================================================================
 
+
 class TestCLIList:
     """Tests for the list subcommand."""
 
@@ -150,9 +164,12 @@ class TestCLIList:
     def test_list_after_ingest(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "List Vendor",
-            "--email", "list@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "List Vendor",
+            "--email",
+            "list@vendor.com",
             cwd=str(tmp_path),
         )
         result = run_wigeon("list", cwd=str(tmp_path))
@@ -162,9 +179,12 @@ class TestCLIList:
     def test_list_with_filter(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "Filter Vendor",
-            "--email", "filter@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "Filter Vendor",
+            "--email",
+            "filter@vendor.com",
             cwd=str(tmp_path),
         )
         result = run_wigeon("list", "--third-party", "Filter Vendor", cwd=str(tmp_path))
@@ -174,9 +194,12 @@ class TestCLIList:
     def test_list_filter_no_match(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "Real Vendor",
-            "--email", "real@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "Real Vendor",
+            "--email",
+            "real@vendor.com",
             cwd=str(tmp_path),
         )
         result = run_wigeon("list", "--third-party", "Nonexistent", cwd=str(tmp_path))
@@ -187,6 +210,7 @@ class TestCLIList:
 # ===================================================================
 # Query Command
 # ===================================================================
+
 
 class TestCLIQuery:
     """Tests for the query subcommand."""
@@ -199,15 +223,20 @@ class TestCLIQuery:
     def test_query_after_ingest(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "Query Vendor",
-            "--email", "query@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "Query Vendor",
+            "--email",
+            "query@vendor.com",
             cwd=str(tmp_path),
         )
         result = run_wigeon(
             "query",
-            "--third-party", "Query Vendor",
-            "--limit", "2",
+            "--third-party",
+            "Query Vendor",
+            "--limit",
+            "2",
             cwd=str(tmp_path),
         )
         assert result.returncode == 0
@@ -216,15 +245,20 @@ class TestCLIQuery:
     def test_query_json_format(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "JSON Vendor",
-            "--email", "json@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "JSON Vendor",
+            "--email",
+            "json@vendor.com",
             cwd=str(tmp_path),
         )
         result = run_wigeon(
             "query",
-            "--third-party", "JSON Vendor",
-            "--format", "json",
+            "--third-party",
+            "JSON Vendor",
+            "--format",
+            "json",
             cwd=str(tmp_path),
         )
         assert result.returncode == 0
@@ -235,6 +269,7 @@ class TestCLIQuery:
 # ===================================================================
 # Stats Command
 # ===================================================================
+
 
 class TestCLIStats:
     """Tests for the stats subcommand."""
@@ -250,9 +285,12 @@ class TestCLIStats:
     def test_stats_after_ingest(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "Stats Vendor",
-            "--email", "stats@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "Stats Vendor",
+            "--email",
+            "stats@vendor.com",
             cwd=str(tmp_path),
         )
         result = run_wigeon("stats", cwd=str(tmp_path))
@@ -265,23 +303,30 @@ class TestCLIStats:
 # Export Command
 # ===================================================================
 
+
 class TestCLIExport:
     """Tests for the export subcommand."""
 
     def test_export_csv(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "ExportCSV Vendor",
-            "--email", "exportcsv@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "ExportCSV Vendor",
+            "--email",
+            "exportcsv@vendor.com",
             cwd=str(tmp_path),
         )
         output = tmp_path / "output.csv"
         result = run_wigeon(
             "export",
-            "--output", str(output),
-            "--third-party", "ExportCSV Vendor",
-            "--format", "csv",
+            "--output",
+            str(output),
+            "--third-party",
+            "ExportCSV Vendor",
+            "--format",
+            "csv",
             cwd=str(tmp_path),
         )
         assert result.returncode == 0
@@ -295,16 +340,21 @@ class TestCLIExport:
     def test_export_json(self, sample_csv, tmp_path):
         run_wigeon(
             "ingest",
-            "--file", str(sample_csv),
-            "--third-party", "JSON Export",
-            "--email", "jsonexport@vendor.com",
+            "--file",
+            str(sample_csv),
+            "--third-party",
+            "JSON Export",
+            "--email",
+            "jsonexport@vendor.com",
             cwd=str(tmp_path),
         )
         output = tmp_path / "output.json"
         result = run_wigeon(
             "export",
-            "--output", str(output),
-            "--format", "json",
+            "--output",
+            str(output),
+            "--format",
+            "json",
             cwd=str(tmp_path),
         )
         assert result.returncode == 0
@@ -314,8 +364,10 @@ class TestCLIExport:
         output = tmp_path / "empty.csv"
         result = run_wigeon(
             "export",
-            "--output", str(output),
-            "--third-party", "Nobody",
+            "--output",
+            str(output),
+            "--third-party",
+            "Nobody",
             cwd=str(tmp_path),
         )
         assert result.returncode == 1

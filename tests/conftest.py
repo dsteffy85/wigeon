@@ -4,11 +4,7 @@ Shared test fixtures for WIGEON test suite
 """
 
 import csv
-import json
-import os
-import shutil
 import sys
-import tempfile
 import zipfile
 from pathlib import Path
 
@@ -19,12 +15,12 @@ PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 sys.path.insert(0, str(PROJECT_ROOT / "scripts"))
 
-from database_schema import WigeonDatabase
-
+from database_schema import WigeonDatabase  # noqa: E402
 
 # ---------------------------------------------------------------------------
 # Temporary directory / database fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def tmp_dir(tmp_path):
@@ -44,6 +40,7 @@ def tmp_db(tmp_path):
 # ---------------------------------------------------------------------------
 # Sample CSV files
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def sample_csv(tmp_path):
@@ -99,6 +96,7 @@ def empty_csv(tmp_path):
 # Sample Excel files (.xlsx)
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def sample_xlsx(tmp_path):
     """Create a minimal .xlsx file with openpyxl."""
@@ -151,6 +149,7 @@ def empty_xlsx(tmp_path):
 # ---------------------------------------------------------------------------
 # Sample XML files
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def sample_xml(tmp_path):
@@ -213,6 +212,7 @@ def malformed_xml(tmp_path):
 # Sample ZIP files
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture
 def sample_zip_with_csv(tmp_path, sample_csv):
     """Create a ZIP containing a CSV file."""
@@ -244,7 +244,7 @@ def sample_zip_with_xml(tmp_path, sample_xml):
 def empty_zip(tmp_path):
     """Create an empty ZIP archive."""
     zip_path = tmp_path / "empty.zip"
-    with zipfile.ZipFile(zip_path, "w") as zf:
+    with zipfile.ZipFile(zip_path, "w"):
         pass  # empty archive
     return zip_path
 
@@ -252,6 +252,7 @@ def empty_zip(tmp_path):
 # ---------------------------------------------------------------------------
 # Pre-populated database fixture
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def populated_db(tmp_db, sample_csv):

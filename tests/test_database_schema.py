@@ -7,16 +7,14 @@ import json
 import sys
 from pathlib import Path
 
-import pytest
-
 sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 from database_schema import WigeonDatabase
 
-
 # ===================================================================
 # Schema & Initialization
 # ===================================================================
+
 
 class TestDatabaseInit:
     """Tests for database creation and schema."""
@@ -61,6 +59,7 @@ class TestDatabaseInit:
 # ===================================================================
 # Third-Party CRUD
 # ===================================================================
+
 
 class TestThirdParty:
     """Tests for third-party management."""
@@ -118,6 +117,7 @@ class TestThirdParty:
 # ===================================================================
 # Report CRUD
 # ===================================================================
+
 
 class TestReports:
     """Tests for report management."""
@@ -195,6 +195,7 @@ class TestReports:
 # Report Data
 # ===================================================================
 
+
 class TestReportData:
     """Tests for report data storage and retrieval."""
 
@@ -251,6 +252,7 @@ class TestReportData:
 # ===================================================================
 # Statistics
 # ===================================================================
+
 
 class TestStatistics:
     """Tests for get_statistics."""

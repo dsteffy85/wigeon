@@ -3,7 +3,6 @@
 Unit tests for WIGEON FileParser and normalize_data
 """
 
-import json
 import sys
 from pathlib import Path
 
@@ -13,10 +12,10 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "scripts"))
 
 from file_parser import FileParser, normalize_data
 
-
 # ===================================================================
 # CSV Parser Tests
 # ===================================================================
+
 
 class TestCSVParser:
     """Tests for CSV file parsing."""
@@ -74,6 +73,7 @@ class TestCSVParser:
 # Excel (.xlsx) Parser Tests
 # ===================================================================
 
+
 class TestXLSXParser:
     """Tests for Excel .xlsx file parsing."""
 
@@ -121,6 +121,7 @@ class TestXLSXParser:
 # XML Parser Tests
 # ===================================================================
 
+
 class TestXMLParser:
     """Tests for XML file parsing."""
 
@@ -147,8 +148,10 @@ class TestXMLParser:
         assert "summary" in data
 
     def test_malformed_xml_raises(self, malformed_xml):
+        import xml.etree.ElementTree as ET
+
         parser = FileParser(malformed_xml)
-        with pytest.raises(Exception):
+        with pytest.raises(ET.ParseError):
             parser.parse()
 
     def test_xml_attributes_captured(self, nested_xml):
@@ -162,6 +165,7 @@ class TestXMLParser:
 # ===================================================================
 # ZIP Parser Tests
 # ===================================================================
+
 
 class TestZIPParser:
     """Tests for ZIP archive parsing."""
@@ -217,6 +221,7 @@ class TestZIPParser:
 # FileParser edge cases
 # ===================================================================
 
+
 class TestFileParserEdgeCases:
     """Edge cases and error handling."""
 
@@ -244,6 +249,7 @@ class TestFileParserEdgeCases:
 # ===================================================================
 # normalize_data Tests
 # ===================================================================
+
 
 class TestNormalizeData:
     """Tests for the normalize_data helper."""

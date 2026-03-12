@@ -7,10 +7,11 @@ Structured error handling for the WIGEON data integration agent
 
 class WigeonError(Exception):
     """Base exception for all WIGEON errors"""
+
     def __init__(self, message: str, details: str = None):
         self.details = details
         super().__init__(message)
-    
+
     def __str__(self):
         msg = super().__str__()
         if self.details:
@@ -20,7 +21,10 @@ class WigeonError(Exception):
 
 class ParseError(WigeonError):
     """Raised when file parsing fails"""
-    def __init__(self, message: str, file_path: str = None, file_format: str = None, line_number: int = None, details: str = None):
+
+    def __init__(
+        self, message: str, file_path: str = None, file_format: str = None, line_number: int = None, details: str = None
+    ):
         self.file_path = file_path
         self.file_format = file_format
         self.line_number = line_number
@@ -36,6 +40,7 @@ class ParseError(WigeonError):
 
 class DatabaseError(WigeonError):
     """Raised when database operations fail"""
+
     def __init__(self, message: str, operation: str = None, table: str = None, details: str = None):
         self.operation = operation
         self.table = table
@@ -49,6 +54,7 @@ class DatabaseError(WigeonError):
 
 class IngestError(WigeonError):
     """Raised when file ingestion fails"""
+
     def __init__(self, message: str, file_path: str = None, third_party: str = None, details: str = None):
         self.file_path = file_path
         self.third_party = third_party
@@ -62,6 +68,7 @@ class IngestError(WigeonError):
 
 class ExportError(WigeonError):
     """Raised when data export fails"""
+
     def __init__(self, message: str, output_path: str = None, format: str = None, details: str = None):
         self.output_path = output_path
         self.format = format
@@ -75,6 +82,7 @@ class ExportError(WigeonError):
 
 class ValidationError(WigeonError):
     """Raised when data validation fails"""
+
     def __init__(self, message: str, field: str = None, value: str = None, details: str = None):
         self.field = field
         self.value = value
