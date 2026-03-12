@@ -1,0 +1,36 @@
+[project]
+name = "wigeon"
+version = "1.2.0"
+description = "Workflow Intelligence for Gathering Email-Originated Notifications — a data integration agent that fetches email reports, parses multiple file formats, and consolidates data into a queryable SQLite database."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+dependencies = [
+    "openpyxl>=3.1.0",
+    "xlrd>=2.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4.0",
+]
+
+[project.scripts]
+wigeon = "wigeon:main"
+
+[tool.ruff]
+target-version = "py39"
+line-length = 120
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
+ignore = ["E501"]  # line length handled by formatter
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"

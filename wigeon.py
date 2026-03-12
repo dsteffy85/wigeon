@@ -21,7 +21,7 @@ from wigeon_processor import WigeonProcessor
 def print_banner():
     """Print WIGEON banner"""
     print("""
-    🦆 WIGEON v1.0
+    🦆 WIGEON v1.2.0
     Workflow Intelligence for Gathering Email-Originated Notifications
     ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
     """)
