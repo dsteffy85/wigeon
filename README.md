@@ -2,95 +2,153 @@
 
 **Workflow Intelligence for Gathering Email-Originated Notifications**
 
-[![CI](https://github.com/dsteffy85/wigeon/actions/workflows/ci.yml/badge.svg)](https://github.com/dsteffy85/wigeon/actions/workflows/ci.yml)
-[![Python 3.9+](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/downloads/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+WIGEON is a universal agent that collects email report attachments from any third-party provider and stores the data in a queryable SQLite database for easy analysis.
 
-WIGEON is a lightweight data integration agent that retrieves email reports from third-party vendors, parses multiple file formats, and consolidates everything into a queryable SQLite database.
+Whether you receive daily inventory reports, sales summaries, shipment tracking, or any other recurring email attachments — WIGEON automates the collection, parsing, and storage so you can focus on analysis instead of file management.
 
 ---
 
 ## ✨ Features
 
-- **Multi-format parsing** — Excel (`.xlsx`, `.xls`), CSV (comma/pipe/tab), XML, and ZIP archives
-- **Auto-delimiter detection** — CSV files with commas, pipes, or tabs are handled automatically
-- **Third-party tracking** — Tag every report with its source vendor for provenance
-- **Flexible JSON storage** — Report data stored as JSON rows, so any schema works
-- **CLI interface** — Six commands: `ingest`, `list`, `query`, `export`, `stats`, `dashboard`
-- **Multiple export formats** — CSV, JSON, and Excel
-- **Interactive dashboard** — Terminal-based report browser with search, filtering, and drill-down
-- **Goose integration** — Use natural language to fetch and process reports via the Goose platform
+- **Any Provider** — Works with any email sender. Add as many providers as you need.
+- **Multi-Format** — Parses Excel (.xlsx, .xls), CSV, XML, and ZIP archives automatically.
+- **Smart Ingestion** — Detects delimiters (comma, pipe, tab), handles multi-sheet workbooks, and normalizes data.
+- **Local Database** — All data stored in a local SQLite database. No cloud dependencies.
+- **Web Dashboard** — Clean, dynamic HTML dashboard to visualize your report data.
+- **CLI Interface** — Full command-line tool for setup, ingestion, querying, and export.
+- **Automated Collection** — Google Apps Script collects attachments from Gmail to Google Drive on a daily schedule.
+- **Goose Integration** — Works as a Goose recipe/agent for conversational data management.
 
 ---
 
 ## 🚀 Quick Start
 
-### Installation
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/dsteffy85/wigeon.git
 cd wigeon
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-### Ingest a report
+### 2. Run setup
 
 ```bash
-python3 wigeon.py ingest \
-  --file samples/sales_report.xlsx \
-  --third-party "Acme Corp" \
-  --email vendor@acme.com
+python3 wigeon.py setup
 ```
 
-### Query the data
+This interactive wizard will:
+- Ask for your first provider's name and email address
+- Optionally configure a Google Drive folder for automated collection
+- Create a `config.json` with your settings
+
+### 3. Add report files
+
+Place report files (Excel, CSV, XML, ZIP) in the `inbox/` directory, then:
 
 ```bash
-# List all reports
-python3 wigeon.py list
+python3 wigeon.py refresh
+```
 
-# Query rows from a specific report
-python3 wigeon.py query --report-id 1 --limit 20
+WIGEON will parse every file, match it to a provider, and store the data.
 
-# Export everything to CSV
-python3 wigeon.py export --output data.csv --format csv
+### 4. Explore your data
 
-# Show database statistics
-python3 wigeon.py stats
-
-# Interactive dashboard
-python3 wigeon.py dashboard --interactive
+```bash
+python3 wigeon.py stats          # Database overview
+python3 wigeon.py list           # List all reports
+python3 wigeon.py dashboard      # Full terminal dashboard
+python3 wigeon.py export --output data.csv --format csv  # Export
 ```
 
 ---
 
-## 🏗️ Architecture
+## 📖 Commands
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                     wigeon.py (CLI)                     │
-│  ingest │ list │ query │ export │ stats │ dashboard     │
-└────────────────────────┬────────────────────────────────┘
-                         │
-              ┌──────────▼──────────┐
-              │  wigeon_processor   │  ← orchestrates parsing + storage
-              └──────────┬──────────┘
-                         │
-          ┌──────────────┼──────────────┐
-          ▼                             ▼
-  ┌───────────────┐           ┌─────────────────┐
-  │  file_parser  │           │ database_schema  │
-  │               │           │                  │
-  │  CSV  (.csv)  │           │  third_parties   │
-  │  XLSX (.xlsx) │           │  reports         │
-  │  XLS  (.xls)  │           │  report_data     │
-  │  XML  (.xml)  │           │  (SQLite)        │
-  │  ZIP  (.zip)  │           │                  │
-  └───────────────┘           └─────────────────┘
+| Command | Description |
+|---------|-------------|
+| `setup` | First-time setup or manage providers |
+| `setup --add-provider` | Add a new email provider |
+| `setup --list-providers` | List configured providers |
+| `setup --remove-provider` | Remove a provider |
+| `setup --show` | Show full configuration |
+| `refresh` | Ingest all files from `inbox/` |
+| `ingest` | Ingest a single file with explicit provider info |
+| `list` | List reports (with optional filters) |
+| `query` | Query report data rows |
+| `export` | Export data to CSV, JSON, or Excel |
+| `stats` | Show database statistics |
+| `dashboard` | Terminal dashboard view |
+| `dashboard --export-json` | Export JSON for the web dashboard |
+| `dashboard --interactive` | Interactive terminal dashboard |
+
+---
+
+## 🌐 Web Dashboard
+
+WIGEON includes a dynamic web dashboard that reads from your database:
+
+```bash
+# Generate the dashboard data
+python3 wigeon.py dashboard --export-json
+
+# Open in browser
+open web-dashboard/index.html
 ```
 
-**Data flow:** File → `FileParser.parse()` → `normalize_data()` → `WigeonDatabase.add_report_data()` → SQLite
+The dashboard shows:
+- Provider cards with report counts and row totals
+- Report type distribution chart
+- Searchable report table
+- Quick command reference
+
+---
+
+## 🤖 Automated Collection (Google Apps Script)
+
+For fully automated daily collection, deploy the included Google Apps Script:
+
+1. Go to [script.google.com](https://script.google.com) → New Project
+2. Paste the contents of `automation/WigeonCollector.gs`
+3. Run the `setup` function (grants permissions, creates folder + trigger)
+4. Edit the email in `addFirstSender()` and run it
+
+The script will:
+- Search Gmail daily at 7 AM for emails with attachments from your providers
+- Save Excel/CSV/XML/ZIP attachments to a `WIGEON_Reports` folder in Google Drive
+- Keep only the 2 most recent copies of each report type (automatic cleanup)
+- Mark processed emails with a `WIGEON_Processed` label
+
+Then use Goose or the CLI to download from Drive and ingest:
+
+```bash
+# Download files from Google Drive to inbox/ (via Goose googledrive extension)
+# Then ingest:
+python3 wigeon.py refresh
+```
+
+See [SETUP.md](SETUP.md) for the complete setup guide.
+
+---
+
+## 🦢 Using with Goose
+
+WIGEON works as a Goose recipe for conversational interaction:
+
+```bash
+goose run wigeon_recipe.yaml
+```
+
+Or use the auto-ingest recipe for scheduled automation:
+
+```bash
+goose run automation/wigeon-auto-ingest.yaml
+```
+
+Example conversation:
+> **You:** Fetch the latest reports from Acme Logistics  
+> **Goose:** Searching Google Drive... Found 3 new files. Downloading and ingesting...  
+> ✅ Ingested 3 reports (12,450 rows). Run `stats` to see the updated totals.
 
 ---
 
@@ -98,181 +156,125 @@ python3 wigeon.py dashboard --interactive
 
 ```
 wigeon/
-├── wigeon.py                   # CLI entry point (6 commands)
+├── wigeon.py                    # Main CLI (setup, refresh, ingest, query, export, dashboard)
+├── wigeon_recipe.yaml           # Goose recipe for conversational use
+├── config.json                  # Your provider config (created by setup, gitignored)
+├── config.example.json          # Example config for reference
+├── pyproject.toml               # Project metadata
+├── requirements.txt             # Python dependencies
+│
 ├── scripts/
-│   ├── database_schema.py      # SQLite database management
-│   ├── file_parser.py          # Multi-format file parser
-│   ├── wigeon_processor.py     # Core processing engine
-│   ├── dashboard.py            # Interactive terminal dashboard
-│   └── exceptions.py           # Custom exception classes
+│   ├── wigeon_config.py         # Config management
+│   ├── wigeon_processor.py      # Core processing engine
+│   ├── database_schema.py       # SQLite schema and queries
+│   ├── dashboard.py             # Terminal dashboard
+│   ├── file_parser.py           # Multi-format file parser
+│   └── exceptions.py            # Custom exceptions
+│
+├── automation/
+│   ├── WigeonCollector.gs       # Google Apps Script (deploy to script.google.com)
+│   └── wigeon-auto-ingest.yaml  # Goose recipe for automated ingestion
+│
+├── web-dashboard/
+│   ├── index.html               # Dynamic web dashboard
+│   └── dashboard-data.json      # Generated by: dashboard --export-json
+│
+├── database/                    # SQLite database (gitignored)
+├── inbox/                       # Drop report files here (gitignored)
+├── exports/                     # Exported data files (gitignored)
+│
 ├── tests/
-│   ├── conftest.py             # Shared fixtures (temp DBs, sample files)
-│   ├── test_file_parser.py     # 28 tests — CSV, XLSX, XML, ZIP, normalize
-│   ├── test_database_schema.py # 29 tests — schema, CRUD, queries, stats
-│   ├── test_wigeon_processor.py# 18 tests — end-to-end processing
-│   └── test_wigeon_cli.py      # 23 tests — CLI args, subcommands
-├── database/                   # SQLite database (auto-created, gitignored)
-├── samples/                    # Sample data generators
-├── docs/                       # Extended documentation
-├── requirements.txt            # Production dependencies
-├── requirements-dev.txt        # Dev dependencies (pytest, ruff)
-├── pyproject.toml              # Project config, ruff + pytest settings
-├── CONTRIBUTING.md             # Contributor guide
-└── .github/workflows/ci.yml   # GitHub Actions CI (Python 3.9–3.12)
+│   ├── conftest.py              # Shared test fixtures
+│   ├── test_database_schema.py  # Database tests
+│   ├── test_file_parser.py      # Parser tests
+│   ├── test_wigeon_processor.py # Processor integration tests
+│   └── test_wigeon_cli.py       # CLI tests
+│
+└── docs/
+    └── USER_GUIDE.md            # Detailed user guide
 ```
 
 ---
 
 ## 🧪 Testing
 
-WIGEON has **98 automated tests** covering the parser, database, processor, and CLI:
-
 ```bash
-# Install dev dependencies
 pip install -r requirements-dev.txt
-
-# Run all tests
 pytest
-
-# Run with coverage
-pytest --cov=scripts --cov-report=term-missing
-
-# Run a specific test file
-pytest tests/test_file_parser.py -v
 ```
 
-| Module             | Tests | Coverage |
-|--------------------|-------|----------|
-| `database_schema`  | 29    | 93%      |
-| `file_parser`      | 28    | 76%      |
-| `wigeon_processor` | 18    | 71%      |
-| CLI (`wigeon.py`)  | 23    | —        |
+The test suite covers:
+- Database schema creation and CRUD operations
+- File parsing (CSV, Excel, XML, ZIP) with various formats
+- End-to-end processing pipeline
+- CLI argument parsing and command routing
+- Edge cases (empty files, missing files, unsupported formats)
 
 ---
 
-## 📖 CLI Reference
+## 🔧 Configuration
 
-### `ingest` — Import a report file
+WIGEON stores its configuration in `config.json` (created by `setup`):
 
-```bash
-python3 wigeon.py ingest \
-  --file report.xlsx \
-  --third-party "CEVA Logistics" \
-  --email ops@example.com \
-  --report-type "Inventory Snapshot" \
-  --report-date 2026-03-01
+```json
+{
+  "version": "2.0.0",
+  "providers": [
+    {
+      "name": "Acme Logistics",
+      "email": "reports@acme-logistics.com",
+      "subject_filter": "",
+      "description": "Daily warehouse reports"
+    }
+  ],
+  "google_drive_folder_id": "",
+  "google_drive_folder_name": "WIGEON_Reports",
+  "inbox_dir": "inbox",
+  "database_path": "database/wigeon.db",
+  "retention": {
+    "max_copies_per_report": 2,
+    "days_to_search": 7
+  }
+}
 ```
 
-### `list` — List ingested reports
-
-```bash
-python3 wigeon.py list
-python3 wigeon.py list --third-party "CEVA Logistics" --status processed
-```
-
-### `query` — Query report data
-
-```bash
-python3 wigeon.py query --report-id 1 --limit 50
-python3 wigeon.py query --third-party "Acme Corp" --format json
-```
-
-### `export` — Export data to file
-
-```bash
-python3 wigeon.py export --output data.csv --format csv
-python3 wigeon.py export --output data.json --format json --third-party "CEVA"
-python3 wigeon.py export --output data.xlsx --format excel
-```
-
-### `stats` — Database statistics
-
-```bash
-python3 wigeon.py stats
-```
-
-### `dashboard` — Interactive report browser
-
-```bash
-python3 wigeon.py dashboard                    # Full overview
-python3 wigeon.py dashboard --interactive      # Menu-driven mode
-python3 wigeon.py dashboard --recent 20        # Last 20 reports
-python3 wigeon.py dashboard --search "CEVA"    # Search reports
-python3 wigeon.py dashboard --days 30          # Last 30 days
-```
+- **providers** — Add as many as you need. Each has a name, email, optional subject filter, and description.
+- **google_drive_folder_id** — Set this to the ID of your WIGEON_Reports Drive folder for automated workflows.
+- **retention** — Controls how many copies of each report type the Apps Script keeps.
 
 ---
 
-## 🔌 Supported File Formats
+## 📊 Supported File Formats
 
-| Format | Extensions        | Notes                                    |
-|--------|-------------------|------------------------------------------|
-| CSV    | `.csv`            | Auto-detects comma, pipe, tab delimiters |
-| Excel  | `.xlsx`, `.xlsm`  | Multi-sheet support via openpyxl         |
-| Excel  | `.xls`            | Legacy format via xlrd (optional)        |
-| XML    | `.xml`            | Repeating elements → rows, attributes preserved |
-| ZIP    | `.zip`            | Recursively parses contained files       |
-
----
-
-## 🗄️ Database Schema
-
-WIGEON uses SQLite with three tables:
-
-- **`third_parties`** — Vendor registry (name, email, metadata)
-- **`reports`** — Report tracking (file, type, date, status, row count)
-- **`report_data`** — Actual data rows stored as flexible JSON
-
-```sql
--- Direct SQL access
-sqlite3 database/wigeon.db
-
--- Example queries
-SELECT * FROM reports ORDER BY created_at DESC LIMIT 10;
-SELECT COUNT(*) FROM report_data WHERE report_id = 1;
-```
+| Format | Extensions | Notes |
+|--------|-----------|-------|
+| Excel | `.xlsx`, `.xlsm` | Multi-sheet support, date handling |
+| Excel (legacy) | `.xls` | Requires `xlrd` |
+| CSV | `.csv` | Auto-detects delimiter (comma, pipe, tab) |
+| XML | `.xml` | Handles repeating elements and nested structures |
+| ZIP | `.zip` | Recursively parses contained files |
 
 ---
 
-## 🤖 Goose Integration
+## 🤝 Contributing
 
-WIGEON works as a [Goose](https://github.com/block/goose) agent. Just ask naturally:
+Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-```
-"Use WIGEON to ingest the sales report from Acme Corp"
-"Show me all CEVA reports from the last 7 days"
-"Export WIGEON data to CSV"
-```
-
-See `wigeon_recipe.yaml` for the Goose recipe definition.
+1. Fork the repository
+2. Create a feature branch
+3. Run tests: `pytest`
+4. Submit a pull request
 
 ---
 
-## 🛠️ Development
+## 📄 License
 
-```bash
-# Lint
-ruff check scripts/ wigeon.py tests/
-
-# Format
-ruff format scripts/ wigeon.py tests/
-
-# Run tests with coverage
-pytest --cov=scripts --cov-report=term-missing
-```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for the full contributor guide.
-
----
-
-## 📜 License
-
-MIT
+MIT License — see [LICENSE](LICENSE) for details.
 
 ---
 
 ## 🦆 Why "WIGEON"?
 
-**W**orkflow **I**ntelligence for **G**athering **E**mail-**O**riginated **N**otifications.
+A [wigeon](https://en.wikipedia.org/wiki/Wigeon) is a duck known for its resourcefulness — it often feeds by taking food gathered by other birds. Similarly, WIGEON gathers data from reports that others send you, making it easy to access and analyze.
 
-Wigeons are social ducks that forage in groups — just like WIGEON consolidates data from multiple sources into one place.
+*Workflow Intelligence for Gathering Email-Originated Notifications*

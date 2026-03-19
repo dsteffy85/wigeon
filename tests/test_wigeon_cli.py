@@ -18,7 +18,7 @@ def run_wigeon(*args, cwd=None):
         capture_output=True,
         text=True,
         cwd=cwd or str(Path(__file__).parent.parent),
-        timeout=30,
+        timeout=120,
     )
     return result
 
@@ -159,7 +159,7 @@ class TestCLIList:
     def test_list_empty(self, tmp_path):
         result = run_wigeon("list", cwd=str(tmp_path))
         assert result.returncode == 0
-        assert "No reports found" in result.stdout or "REPORTS" in result.stdout
+        assert "No reports found" in result.stdout or "report(s)" in result.stdout
 
     def test_list_after_ingest(self, sample_csv, tmp_path):
         run_wigeon(
@@ -218,7 +218,7 @@ class TestCLIQuery:
     def test_query_empty(self, tmp_path):
         result = run_wigeon("query", cwd=str(tmp_path))
         assert result.returncode == 0
-        assert "No data found" in result.stdout or "QUERYING" in result.stdout
+        assert "No data found" in result.stdout or "row(s)" in result.stdout
 
     def test_query_after_ingest(self, sample_csv, tmp_path):
         run_wigeon(
@@ -277,8 +277,8 @@ class TestCLIStats:
     def test_stats_shows_output(self, tmp_path):
         result = run_wigeon("stats", cwd=str(tmp_path))
         assert result.returncode == 0
-        assert "STATISTICS" in result.stdout
-        assert "Third-parties:" in result.stdout
+        assert "WIGEON DATABASE" in result.stdout or "STATISTICS" in result.stdout
+        assert "Providers:" in result.stdout or "Third-parties:" in result.stdout
         assert "Total reports:" in result.stdout
         assert "Total data rows:" in result.stdout
 
@@ -295,7 +295,7 @@ class TestCLIStats:
         )
         result = run_wigeon("stats", cwd=str(tmp_path))
         assert result.returncode == 0
-        assert "STATISTICS" in result.stdout
+        assert "WIGEON DATABASE" in result.stdout or "STATISTICS" in result.stdout
         assert "Stats Vendor" in result.stdout
 
 

@@ -1,14 +1,17 @@
 # Database
 database/*.db
 database/*.db-journal
-database/*.db-wal
 
-# Data files - sensitive/proprietary
-inbox/
-exports/
-*.csv
-*.xlsx
-*.xls
+# Inbox (downloaded files)
+inbox/*
+!inbox/.gitkeep
+
+# Exports
+exports/*
+!exports/.gitkeep
+
+# Config (contains user-specific settings)
+config.json
 
 # Python
 __pycache__/
@@ -18,36 +21,22 @@ __pycache__/
 dist/
 build/
 .eggs/
-*.egg
 
-# Virtual environments
-venv/
-.venv/
-env/
-
-# OS files
+# OS
 .DS_Store
 Thumbs.db
-*.swp
-*.swo
-*~
 
 # IDE
 .vscode/
 .idea/
-*.sublime-project
-*.sublime-workspace
+*.swp
+*.swo
 
 # Logs
 *.log
 
-# Temp files
-*.tmp
-*.bak
-*.backup
-
-# Testing
-.pytest_cache/
-htmlcov/
-coverage.xml
+# Virtual environments
+.venv/
+venv/
+env/
 .coverage

@@ -1,7 +1,7 @@
 [project]
 name = "wigeon"
-version = "1.2.0"
-description = "Workflow Intelligence for Gathering Email-Originated Notifications — a data integration agent that fetches email reports, parses multiple file formats, and consolidates data into a queryable SQLite database."
+version = "2.0.0"
+description = "🦆 WIGEON — A universal agent that collects email report attachments from any third-party provider and stores the data in a queryable SQLite database for easy analysis."
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.9"
@@ -26,7 +26,7 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP", "B", "SIM"]
-ignore = ["E501"]  # line length handled by formatter
+ignore = ["E501"]
 
 [tool.ruff.format]
 quote-style = "double"

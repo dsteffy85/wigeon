@@ -1,0 +1,19 @@
+{
+  "version": "2.0.0",
+  "providers": [
+    {
+      "name": "Acme Logistics",
+      "email": "reports@acme-logistics.com",
+      "subject_filter": "",
+      "description": "Daily warehouse reports"
+    }
+  ],
+  "google_drive_folder_id": "",
+  "google_drive_folder_name": "WIGEON_Reports",
+  "inbox_dir": "inbox",
+  "database_path": "database/wigeon.db",
+  "retention": {
+    "max_copies_per_report": 2,
+    "days_to_search": 7
+  }
+}

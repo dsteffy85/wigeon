@@ -335,7 +335,7 @@ class WigeonDashboard:
         print("    1. Export to CSV       → python3 wigeon.py export --output data.csv --format csv")
         print("    2. Export to Excel     → python3 wigeon.py export --output data.xlsx --format excel")
         print("    3. Export to JSON      → python3 wigeon.py export --output data.json --format json")
-        print("    4. Export by vendor    → python3 wigeon.py export --third-party 'CEVA Logistics' --output ceva.csv")
+        print("    4. Export by vendor    → python3 wigeon.py export --third-party 'Vendor Name' --output vendor.csv")
         print("    5. Query specific data → python3 wigeon.py query --report-id 8 --limit 100")
         print("    6. List all reports    → python3 wigeon.py list")
         print("    7. Search reports      → python3 wigeon.py dashboard --search 'inventory'")

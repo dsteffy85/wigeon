@@ -230,7 +230,7 @@ class FileParser:
                 if file_path.is_file():
                     file_format = file_path.suffix.lower()
 
-                    if file_format in [".xlsx", ".xlsm", ".xls", ".xml"]:
+                    if file_format in [".xlsx", ".xlsm", ".xls", ".xml", ".csv"]:
                         try:
                             parser = FileParser(file_path)
                             results[file_path.name] = parser.parse()
