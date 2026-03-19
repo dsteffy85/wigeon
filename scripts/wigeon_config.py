@@ -7,9 +7,7 @@ Handles provider setup, config persistence, and first-run experience.
 from __future__ import annotations
 
 import json
-import sys
 from pathlib import Path
-from typing import Optional
 
 CONFIG_FILENAME = "config.json"
 DEFAULT_CONFIG = {
@@ -26,13 +24,13 @@ DEFAULT_CONFIG = {
 }
 
 
-def _config_path(project_root: Optional[Path] = None) -> Path:
+def _config_path(project_root: Path | None = None) -> Path:
     if project_root is None:
         project_root = Path(__file__).resolve().parent.parent
     return project_root / CONFIG_FILENAME
 
 
-def load_config(project_root: Optional[Path] = None) -> dict:
+def load_config(project_root: Path | None = None) -> dict:
     """Load config.json or return defaults if missing."""
     path = _config_path(project_root)
     if path.exists():
@@ -45,7 +43,7 @@ def load_config(project_root: Optional[Path] = None) -> dict:
     return dict(DEFAULT_CONFIG)
 
 
-def save_config(config: dict, project_root: Optional[Path] = None) -> Path:
+def save_config(config: dict, project_root: Path | None = None) -> Path:
     """Persist config to config.json."""
     path = _config_path(project_root)
     with open(path, "w") as f:

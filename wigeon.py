@@ -15,15 +15,15 @@ from pathlib import Path
 # Add scripts directory to path
 sys.path.insert(0, str(Path(__file__).parent / "scripts"))
 
-from wigeon_processor import WigeonProcessor
 from wigeon_config import (
-    load_config,
-    save_config,
     add_provider,
-    remove_provider,
-    list_providers,
     interactive_setup,
+    list_providers,
+    load_config,
+    remove_provider,
+    save_config,
 )
+from wigeon_processor import WigeonProcessor
 
 VERSION = "2.0.0"
 PROJECT_ROOT = Path(__file__).parent
@@ -38,6 +38,7 @@ def print_banner():
 
 
 # ─── Setup Command ────────────────────────────────────────────────
+
 
 def cmd_setup(args):
     """First-time setup or provider management."""
@@ -96,6 +97,7 @@ def cmd_setup(args):
 
 # ─── Refresh Command ──────────────────────────────────────────────
 
+
 def cmd_refresh(args):
     """Refresh: download new reports from inbox/ and ingest them."""
     config = load_config(PROJECT_ROOT)
@@ -148,10 +150,10 @@ def cmd_refresh(args):
 
     processor.close()
 
-    print(f"  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+    print("  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
     print(f"  ✅ Ingested: {success_count}  ❌ Failed: {fail_count}")
-    print(f"  Run 'python3 wigeon.py stats' to see updated totals.")
-    print(f"  Run 'python3 wigeon.py dashboard' for the full view.\n")
+    print("  Run 'python3 wigeon.py stats' to see updated totals.")
+    print("  Run 'python3 wigeon.py dashboard' for the full view.\n")
     return 0 if fail_count == 0 else 1
 
 
@@ -172,11 +174,12 @@ def _match_provider(filename, providers):
 
 # ─── Ingest Command ───────────────────────────────────────────────
 
+
 def cmd_ingest(args):
     """Ingest a single report file."""
     processor = WigeonProcessor()
 
-    print(f"\n  📥 INGESTING REPORT")
+    print("\n  📥 INGESTING REPORT")
     print(f"     File: {args.file}")
     print(f"     Provider: {args.third_party}")
     print(f"     Email: {args.email}")
@@ -203,6 +206,7 @@ def cmd_ingest(args):
 
 # ─── List Command ─────────────────────────────────────────────────
 
+
 def cmd_list(args):
     """List reports."""
     processor = WigeonProcessor()
@@ -226,8 +230,14 @@ def cmd_list(args):
 
     for r in reports:
         name = (r["third_party_name"][:20] + "..") if len(r["third_party_name"]) > 22 else r["third_party_name"]
-        rtype = (r["report_type"][:26] + "..") if r["report_type"] and len(r["report_type"]) > 28 else (r["report_type"] or "—")
-        print(f"  {r['id']:>4}  {name:<22} {rtype:<28} {r['report_date'] or '—':<12} {r['row_count']:>8,}  {r['status']}")
+        rtype = (
+            (r["report_type"][:26] + "..")
+            if r["report_type"] and len(r["report_type"]) > 28
+            else (r["report_type"] or "—")
+        )
+        print(
+            f"  {r['id']:>4}  {name:<22} {rtype:<28} {r['report_date'] or '—':<12} {r['row_count']:>8,}  {r['status']}"
+        )
 
     print()
     processor.close()
@@ -235,6 +245,7 @@ def cmd_list(args):
 
 
 # ─── Query Command ────────────────────────────────────────────────
+
 
 def cmd_query(args):
     """Query report data."""
@@ -268,6 +279,7 @@ def cmd_query(args):
 
 # ─── Export Command ───────────────────────────────────────────────
 
+
 def cmd_export(args):
     """Export data to file."""
     processor = WigeonProcessor()
@@ -287,24 +299,25 @@ def cmd_export(args):
 
 # ─── Stats Command ────────────────────────────────────────────────
 
+
 def cmd_stats(args):
     """Show statistics."""
     processor = WigeonProcessor()
     stats = processor.get_statistics()
 
-    print(f"\n  📊 WIGEON DATABASE")
+    print("\n  📊 WIGEON DATABASE")
     print(f"  {'─' * 40}")
     print(f"  Providers:       {stats['third_parties']}")
     print(f"  Total reports:   {stats['total_reports']}")
     print(f"  Total data rows: {stats['total_data_rows']:,}")
 
     if stats["reports_by_status"]:
-        print(f"\n  By status:")
+        print("\n  By status:")
         for status, count in stats["reports_by_status"].items():
             print(f"    {status}: {count}")
 
     if stats["reports_by_third_party"]:
-        print(f"\n  By provider:")
+        print("\n  By provider:")
         for name, count in stats["reports_by_third_party"].items():
             print(f"    {name}: {count}")
 
@@ -314,6 +327,7 @@ def cmd_stats(args):
 
 
 # ─── Dashboard Command ───────────────────────────────────────────
+
 
 def cmd_dashboard(args):
     """Show dashboard."""
@@ -358,11 +372,12 @@ def _export_dashboard_json():
         json.dump(dashboard_data, f, indent=2, default=str)
 
     print(f"\n  ✅ Dashboard data exported to {out_path}")
-    print(f"     Open web-dashboard/index.html in a browser to view.\n")
+    print("     Open web-dashboard/index.html in a browser to view.\n")
     processor.close()
 
 
 # ─── Argument Parser ──────────────────────────────────────────────
+
 
 def build_parser():
     parser = argparse.ArgumentParser(
